@@ -39,12 +39,12 @@ set :access_token, {:token => 'XXXXXX',
                     :secret => 'XXXXXX'}
 set :name, 'my_bot_name'
 
-on_matched_reply /(^@my_bot_name\s)(Hello)/u do |status, user|
+on_matched_reply /^@my_bot_name\s(Hello)/u do |status, user|
   reply "@#{user.screen_name} Hello!"
 end
 
 on_replied do |status, user|
-  reply "@#{user.screen_name} #{status.text}"
+  reply "@#{user.screen_name} #{status.text.slice(/^@my_bot_name\s(.*)/u, 1)}"
 end
 ```
 
