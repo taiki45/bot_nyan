@@ -74,12 +74,12 @@ $ rake install
                     <span class="ss">:secret</span> <span class="o">=&gt;</span> <span class="s1">'XXXXXX'</span><span class="p">}</span>
 <span class="n">set</span> <span class="ss">:name</span><span class="p">,</span> <span class="s1">'my_bot_name'</span>
 
-<span class="n">on_matched_reply</span> <span class="sr">/(^@my_bot_name\s)(Hello)/u</span> <span class="k">do</span> <span class="o">|</span><span class="n">status</span><span class="p">,</span> <span class="n">user</span><span class="o">|</span>
+<span class="n">on_matched_reply</span> <span class="sr">/^@my_bot_name\s(Hello)/u</span> <span class="k">do</span> <span class="o">|</span><span class="n">status</span><span class="p">,</span> <span class="n">user</span><span class="o">|</span>
   <span class="n">reply</span> <span class="s2">"@</span><span class="si">#{</span><span class="n">user</span><span class="o">.</span><span class="n">screen_name</span><span class="si">}</span><span class="s2"> Hello!"</span>
 <span class="k">end</span>
 
 <span class="n">on_replied</span> <span class="k">do</span> <span class="o">|</span><span class="n">status</span><span class="p">,</span> <span class="n">user</span><span class="o">|</span>
-  <span class="n">reply</span> <span class="s2">"@</span><span class="si">#{</span><span class="n">user</span><span class="o">.</span><span class="n">screen_name</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">status</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span>
+  <span class="n">reply</span> <span class="s2">"@</span><span class="si">#{</span><span class="n">user</span><span class="o">.</span><span class="n">screen_name</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">status</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="sr">/^@my_bot_name\s(.*)/u</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
 <span class="k">end</span>
 </pre></div>
 
