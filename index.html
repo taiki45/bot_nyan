@@ -51,12 +51,20 @@
 <pre><code>$ gem install bot_nyan
 </code></pre>
 
+<p>Or clone and build yourself:</p>
+
+<pre><code>$ git clone git://github.com/taiki45/bot_nyan.git &amp;&amp; cd bot_nyan
+
+$ gem build bot_nyan.gemspec
+
+$ rake install
+</code></pre>
+
 <h2>Usage</h2>
 
 <p>Simple echo and say-hello Bot.</p>
 
 <div class="highlight"><pre><span class="c1"># bot.rb</span>
-
 <span class="c1"># -*- encoding: utf-8 -*-</span>
 <span class="nb">require</span> <span class="s1">'bot_nyan'</span>
 
