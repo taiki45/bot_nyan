@@ -16,13 +16,20 @@ Or install it yourself as:
 
     $ gem install bot_nyan
 
+Or clone and build yourself:
+
+    $ git clone git://github.com/taiki45/bot_nyan.git && cd bot_nyan
+
+    $ gem build bot_nyan.gemspec
+
+    $ rake install
+
 ## Usage
 
 Simple echo and say-hello Bot.
 
 ```ruby
 # bot.rb
-
 # -*- encoding: utf-8 -*-
 require 'bot_nyan'
 
