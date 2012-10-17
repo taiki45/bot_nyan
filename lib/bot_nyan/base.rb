@@ -14,11 +14,7 @@ module BotNyan
   module Info
     def logger_set!(cond)
       @logger = Logger.new STDOUT
-      if cond
-        @logger.level = Logger::DEBUG
-      else
-        @logger.level = Logger::INFO
-      end
+      @logger.level = cond ? Logger::DEBUG : Logger::INFO
     end
 
     def info(msg)
