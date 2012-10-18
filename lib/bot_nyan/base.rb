@@ -87,13 +87,13 @@ module BotNyan
       get_matched_reply_actions.each do |regexp, block|
         if event.text.match regexp
           debug "matched to #{regexp}"
-          instance_exec event, event.user, &block
+          instance_exec &block
           throw :halt
         end
       end
       if event.text.match(/(^@#{name}\s)/u) and get_relpy_action
         debug "respond to default reply"
-        instance_exec event, event.user, &get_relpy_action
+        instance_exec &get_relpy_action
         throw :halt
       end
     end
@@ -103,6 +103,10 @@ module BotNyan
       @wrapper.status
     end
 
+    def user
+      @wrapper.status.user
+    end
+
     def update(msg)
       @wrapper.update msg
     end
@@ -110,6 +114,10 @@ module BotNyan
     def reply(msg)
       @wrapper.reply msg
     end
+
+    alias event status
+    alias respond reply
+    alias tweet update
 
     # Inner methods that call self.class methods
     def get_matched_reply_actions
@@ -231,32 +239,30 @@ module BotNyan
       end
 
       # wrapping methods for twitter state
-      def status
-        @json
+      %w(status event json).each do |name|
+        define_method name.to_sym do @json end
       end
 
       def update(msg)
-        update_core :update, msg, @json
+        update_core ->(m){ @client.update m }, msg, @json
       end
 
       def reply(msg)
-        update_core :reply, msg, @json
+        post_proc = ->(m){ @client.update m, :in_reply_to_status_id => event.id }
+        update_core post_proc, msg, @json
       end
 
-      def update_core(mode, msg, json)
-        i = 0
-        if mode == :update
-          post_text = lambda {|m| @client.update(m) }
-        elsif mode == :reply
-          post_text = lambda {|m| @client.update(m, :in_reply_to_status_id => json.id) }
-        end
+      def update_core(post_proc, msg, json)
         12.times do |n|
-          break if post_text.call(msg)
-          sleep 0.5
-          msg << " ."
-          if n > 10
-            @logger.warn "error to post reply to below"
-            return false
+          begin
+            break if post_proc.call msg
+          rescue Twitter::Error::Forbidden
+            sleep 0.5
+            msg << " ."
+            if n > 10
+              @logger.warn "error to post reply to below"
+              return false
+            end
           end
         end
         @logger.info "replied to #{json.id}"
