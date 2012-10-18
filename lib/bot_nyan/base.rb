@@ -60,11 +60,9 @@ module BotNyan
                 debug event.event
                 if event.text and event.text.match /(^@#{name}\s)/u
                   debug "tweet event"
-                  debug event
                   match? event
                 else
-                  debug 'not tweets'
-                  debug event
+                  debug 'not reply'
                 end
               end
             end
