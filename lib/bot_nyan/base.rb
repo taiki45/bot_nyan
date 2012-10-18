@@ -190,12 +190,12 @@ module BotNyan
           access_tokens[:token],
           access_tokens[:secret]
         )
-        Twitter.configure do |c|
-          c.consumer_key = consumer_keys[:key]
-          c.consumer_secret = consumer_keys[:secret]
-          c.oauth_token = access_tokens[:token]
-          c.oauth_token_secret = access_tokens[:secret]
-        end
+        @client = Twitter::Client.new(
+          :consumer_key => consumer_keys[:key],
+          :consumer_secret => consumer_keys[:secret],
+          :oauth_token => access_tokens[:token],
+          :oauth_token_secret => access_tokens[:secret]
+        )
         @json = nil
       end
 
@@ -246,31 +246,20 @@ module BotNyan
       def update_core(mode, msg, json)
         i = 0
         if mode == :update
-          post_text = lambda do |m|
-            @access_token.post(
-              '/statuses/update.json',
-              'status' => m,
-            )
-          end
+          post_text = lambda {|m| @client.update(m) }
         elsif mode == :reply
-          post_text = lambda do |m|
-            @access_token.post(
-              '/statuses/update.json',
-              'status' => m,
-              'in_reply_to_status_id' => json['id']
-            )
-          end
+          post_text = lambda {|m| @client.update(m, :in_reply_to_status_id => json.id) }
         end
-        while post_text.call(msg).code == '403' do
-          sleep 0.3
-          i += 1
+        12.times do |n|
+          break if post_text.call(msg)
+          sleep 0.5
           msg << " ."
-          if i > 12
-            puts "error to post reply to below"
+          if n > 10
+            @logger.warn "error to post reply to below"
             return false
           end
         end
-        puts "replied to #{json['id']}"
+        @logger.info "replied to #{json.id}"
         true
       end
     end
