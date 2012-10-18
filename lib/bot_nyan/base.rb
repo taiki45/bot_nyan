@@ -74,7 +74,7 @@ module BotNyan
           end
         end
       rescue Interrupt
-        info "\nexitting bot service for @#{name}..."
+        info "exitting bot service for @#{name}..."
         exit 0
       end
     end
